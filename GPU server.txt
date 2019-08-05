@@ -1,0 +1,30 @@
+docker login nvcr.io
+
+Username: $oauthtoken
+Password: <Your Key>
+
+
+API key
+cHYwN2trazE5NDhhZTg3cTNkNjFjcjRiMGg6MzdjMzNjNGYtY2FhOS00ZDFkLWFmYWUtOGY4MDM0NTM3ZmEz
+
+
+vi Dockerfile
+
+FROM nvcr.io/nvidia/tensorflow:19.06-py3
+WORKDIR /my-ml-files
+RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple jupyter
+EXPOSE 8888
+RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple Cython
+RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple keras scikit-image imgaug opencv-python Cython pycocotools
+RUN pip install git+git://github.com/raghakot/keras-vis.git --upgrade --no-deps
+RUN apt update && apt install -y libsm6 libxext6 libxrender1
+
+docker build -t my-nvidia-container .
+
+nvidia-docker run --rm -p "8888:8888" -it -v /root/nongye:/my-ml-files/nongye my-nvidia-container
+
+nohup jupyter notebook --port=8888 --ip=0.0.0.0 --allow-root --no-browser . &
+
+
+
+apt-get install python-gdal
